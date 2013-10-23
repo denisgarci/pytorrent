@@ -1,3 +1,4 @@
+import io
 
 def bdecode(iostream):
     """
@@ -5,6 +6,8 @@ def bdecode(iostream):
         #bdecode(iostream)
     #{'spam': ['a', 'b']}
     """
+    if isinstance(iostream, unicode):
+        iostream = io.StringIO(iostream)
 
     def decode_str(c):
         assert c in '0123456789'
@@ -79,8 +82,7 @@ def bencode(data):
         return 'l{0}e'.format(''.join(bencode(item) for item in a_list))
 
     def encode_dict(a_dict):
-        #return 'd{0}e'.format(''.join('{0}{1}'.format(bencode(k), bencode(v)) for k,v in a_dict.items()))
-        return 'd{0}e'.format(''.join('{0}{1}'.format(bencode(key), bencode(value)) for key, value in a_dict.iteritems()))
+        return 'd{0}e'.format(''.join('{0}{1}'.format(bencode(key), bencode(value)) for key, value in sorted(a_dict.iteritems())))
 
     encode_rules = {int : encode_int,
                     str : encode_str,
@@ -90,10 +92,10 @@ def bencode(data):
     return encode_rules[type(data)](data)
 
 if __name__ == '__main__':
-    import io
     import doctest
 
     with io.open('simple_torrent.txt', 'rb') as iostream:
+        print(type(iostream))
         my_decoder = bdecode(iostream)
         print(my_decoder)
 
