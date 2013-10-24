@@ -42,8 +42,12 @@ class Torrent():
         return r.text
 
     def get_peers(self):
-        peers=  utils.bdecode(self.request_tracker())['peers']
-        return struct.unpack(">L", peers)[0]
+        '''
+        Returns a list of pairs (ip, port)
+        '''
+        peers =  utils.bdecode(self.request_tracker())['peers']
+        peers_bytecode = [peers[i: i+6] for i in range(len(peers)/6)]
+        return peers_bytecode
 
 if __name__ == '__main__':
     import utils
@@ -54,4 +58,10 @@ if __name__ == '__main__':
     print(tom_torrent.tracker_info)
     print(tom_torrent.hash_info)
     print(tom_torrent.request_tracker())
-    print(tom_torrent.get_peers())
+    print(repr(tom_torrent.get_peers()))
+
+    # user repr!
+    # ord and chr
+    # see as number
+    # check struct
+    # x.decode / encode
